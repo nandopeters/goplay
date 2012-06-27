@@ -12,38 +12,66 @@ import (
 type Message struct {
 		Ag	string
 		Sb	string
-		//Fr	string
-		//DT	string
+		Fr	string
+		DT	string
 	}
 
 var cs = make(chan string)
+var inMsgNo = 1
+var outMsgNo = 1
 
-func Echo(ws *websocket.Conn) {
+func phone(ws *websocket.Conn) {
 	
 	//Receive Message	
 	var reply string
 	err := websocket.Message.Receive(ws, &reply)
 	checkError(err)
-	fmt.Println("Received location update:  ", reply)
+	fmt.Println("Received Message No:", inMsgNo," :", reply)
+	inMsgNo++
+	
 	//Send Message
+	msg := "ACK"
+	err = websocket.Message.Send(ws, msg)
+	checkError(err)
+	
+	m := decode(reply)
+	fmt.Println("Unmarshalled:  ", m)
+	fmt.Println("write chan")
+	writeChann(reply)
+
+}
+
+
+
+func iPad(ws *websocket.Conn) {
+	
+	//Receive Message	
+/*	
+	var reply string
+	err := websocket.Message.Receive(ws, &reply)
+	checkError(err)
+	fmt.Println("Received location update:  ", reply)
+*/	
+	//Send Message
+/*
 	msg := "ACK"
 	fmt.Println("Sending to client: " + msg)
 	err = websocket.Message.Send(ws, msg)
 	checkError(err)
 	m := decode(reply)
 	fmt.Println("Unmarshalled:  ", m)
-	switch (m.Ag + "/" + m.Sb) {
-		case "locmgr/locupdt":
-			fmt.Println("write chan")
-			writeChann(reply)
-			
-		case "locmgr/updts":
-			fmt.Println("read chan")
-			readChann()	
-		default:
-			fmt.Println("Unknown Agent and Subject")
-		}	
+	fmt.Println("read chan")
+*/
+	for s := range cs {
+        fmt.Println("Received msg: ", s)
+        err := websocket.Message.Send(ws, s)
+        checkError(err)
+        }
+	
+
 }
+
+
 
 func writeChann (msg string) {
 	cs <- msg
@@ -83,7 +111,10 @@ func exit_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.Handle("/", websocket.Handler(Echo))
+
+
+	http.Handle("/phone", websocket.Handler(phone))
+	http.Handle("/iPad", websocket.Handler(iPad))
 	http.HandleFunc("/exit", exit_handler)
 	err := http.ListenAndServe(":9030", nil)
 	checkError(err)
