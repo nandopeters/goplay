@@ -63,22 +63,45 @@ func readALine()  {
 	}
 }
 
+type CS struct {
+	name	string
+	msg 	[] string
+	*test 	func( a string )
+}
+	
+func pop ( s [] string ) (string, []string ) {
+	
+	l:= len(s)
+	return s[0], s[1: l]
+
+}
+
+func push ( s [] string, item string) []string {
+	return append (s, item)
+	}
+	
+func CS.test ( a string ) {
+return "hello"
+}
+
+
 func main() {
 
-service := "part1 : "
+var s [] string
+var r string
+s = append ( s, "Msg 1" )
+s = push ( s, "Msg 2")
+s = push (s, "Msg 3")
+s = push (s, "Msg 4")
 
-service += "part2"
+fmt.Println ( len(s) )
 
-fmt.Println( service )
-os.Exit(0)
-
-fmt.Println( time.Now().String() )
-
-readALine();
+r , s = pop ( s)
+fmt.Println ( r );
+fmt.Println ( s );
 
 
-smsg := locationUpdate()
-fmt.Println( smsg)	
+
 
 }
 
