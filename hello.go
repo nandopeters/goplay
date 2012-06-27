@@ -65,6 +65,13 @@ func readALine()  {
 
 func main() {
 
+service := "part1 : "
+
+service += "part2"
+
+fmt.Println( service )
+os.Exit(0)
+
 fmt.Println( time.Now().String() )
 
 readALine();

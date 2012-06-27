@@ -28,11 +28,18 @@ func str2js(c Location) string {
 
 func main() {
 	
-	service := "ws://localhost:9030/phone"
+	service := "ws://localhost:9030"
+
+	if len(os.Args) > 1 {
+		service += "/" + os.Args[1]
+	} else {
+		service += "/phone"
+		}
 
 	//Connect
 	conn, err := websocket.Dial(service, "", "http://localhost")
 	checkError(err)
+
 
 	//Send
 	smsg := locationUpdate( )
@@ -43,7 +50,7 @@ func main() {
 	var rmsg string	
 	err = websocket.Message.Receive(conn, &rmsg)
 	checkError(err)
-	fmt.Println("Received from server: " + rmsg)
+	fmt.Println("Received: " + rmsg)
 	
 	os.Exit(0)
 }

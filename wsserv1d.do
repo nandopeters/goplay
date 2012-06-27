@@ -26,7 +26,8 @@ func phone(ws *websocket.Conn) {
 	var reply string
 	err := websocket.Message.Receive(ws, &reply)
 	checkError(err)
-	fmt.Println("Received Message No:", inMsgNo," :", reply)
+	fmt.Println("Received Message No:", inMsgNo)
+	fmt.Println( reply )
 	inMsgNo++
 	
 	//Send Message
@@ -35,8 +36,9 @@ func phone(ws *websocket.Conn) {
 	checkError(err)
 	
 	m := decode(reply)
-	fmt.Println("Unmarshalled:  ", m)
-	fmt.Println("write chan")
+	fmt.Println("Unmarshalled:  ")
+	fmt.Println( m, "\n" );
+
 	writeChann(reply)
 
 }
@@ -46,24 +48,15 @@ func phone(ws *websocket.Conn) {
 func iPad(ws *websocket.Conn) {
 	
 	//Receive Message	
-/*	
-	var reply string
-	err := websocket.Message.Receive(ws, &reply)
+	
+	var who string;
+
+	err := websocket.Message.Receive(ws, &who)
 	checkError(err)
-	fmt.Println("Received location update:  ", reply)
-*/	
-	//Send Message
-/*
-	msg := "ACK"
-	fmt.Println("Sending to client: " + msg)
-	err = websocket.Message.Send(ws, msg)
-	checkError(err)
-	m := decode(reply)
-	fmt.Println("Unmarshalled:  ", m)
-	fmt.Println("read chan")
-*/
+	fmt.Println("Connected to client :", who)
+
 	for s := range cs {
-        fmt.Println("Received msg: ", s)
+        fmt.Println("Sending: ", s)
         err := websocket.Message.Send(ws, s)
         checkError(err)
         }

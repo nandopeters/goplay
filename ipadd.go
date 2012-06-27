@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"os"
 	"code.google.com/p/go.net/websocket"
-	"time"
 )
 
 type Location struct {
@@ -25,6 +24,14 @@ func str2js(c Location) string {
 
 func main() {
 	
+	var who string
+	
+	if len(os.Args) > 1 {
+		who = os.Args[1]
+	} else {
+		who = "ALFONSO"
+		}
+	
 	service := "ws://localhost:9030/iPad"
 
 
@@ -32,22 +39,20 @@ func main() {
 	conn, err := websocket.Dial(service, "", "http://localhost")
 	checkError(err)
 	
-	//Send	
-	/*
-	smsg := locationUpdate()
-	fmt.Println("before sending");
-	smsg = "NACK"
-	err = websocket.Message.Send(conn, smsg)
-	checkError(err)
-	*/
+	fmt.Println("Connected");
 	
-	//Receive
-	var rmsg string	
-	err = websocket.Message.Receive(conn, &rmsg)
-	checkError(err)
-	fmt.Println("Received from server: " + rmsg)
-	
-	os.Exit(0)
+	err = websocket.Message.Send(conn, who)
+    checkError(err)
+		
+	for {
+		//Receive
+		var rmsg string	
+		err = websocket.Message.Receive(conn, &rmsg)
+		checkError(err)
+		fmt.Println("Received:")
+		fmt.Println( rmsg )
+		}
+
 }
 
 func checkError(err error) {
@@ -57,20 +62,3 @@ func checkError(err error) {
 	}
 }
 
-func locationUpdate() string {
-	//jstr := "{"
-	
-	
-	loc := Location{}
-	loc.Ag = "locmgr"
-	loc.Sb = "updts"
-	loc.Fr = "HQ"
-	loc.DT = time.Now().String()	
-	
-	jstr := str2js(loc) 
-	
-	//jstr += str2js(loc)   
-	//jstr += "}"
-	
-	return jstr
-}
