@@ -13,11 +13,8 @@ import (
 type Location struct {
 	Ag		string
 	Sb		string	
-	Fr		string
 	DT		string
-	Lat		string
-	Lng		string
-	Msg		string
+
 }
 
 func str2js(c Location) string {
@@ -30,20 +27,11 @@ func str2js(c Location) string {
 
 func locationUpdate() string {
 	
-	//jstr := "{"
-	
 	loc := Location{}
 	loc.Ag = "locmgr"
 	loc.Sb = "locupdt"
-	loc.Fr = "4"
 	loc.DT = time.Now().String()
-	loc.Lat = "60.00"
-	loc.Lng = "-120.00"
-	loc.Msg = "Arrived"
-	fmt.Println( loc )
 	jstr := str2js(loc)   
-	//jstr += "}"
-	
 	return jstr
 }
 
@@ -63,15 +51,14 @@ func readALine()  {
 	}
 }
 
-type CS struct {
-	name	string
-	msg 	[] string
 
-}
 	
 func pop ( s [] string ) (string, []string ) {
 	
 	l:= len(s)
+	if ( l == 0 ){
+		return "", s[0:0]
+		}
 	return s[0], s[1: l]
 
 }
@@ -80,26 +67,41 @@ func push ( s [] string, item string) []string {
 	return append (s, item)
 	}
 	
+type CS struct {
+	name	string
+	msg 	[] string
 
+}
+
+type CM struct {
+	 cs 	*CS
+	}
+
+var m map[string]CM
 
 func main() {
-
-
 cs := new (CS)
 
-var s [] string
-var r string
-s = append ( s, "Msg 1" )
-s = push ( s, "Msg 2")
-s = push (s, "Msg 3")
-s = push (s, "Msg 4")
 
-fmt.Println ( len(s) )
+cs.name = "AL"
+cs.msg = push (cs.msg, "'message1 from AL'" )
+cs.msg = push (cs.msg, "'message2 from AL'" )
 
-r , s = pop ( s)
-fmt.Println ( r );
-fmt.Println ( s );
 
+m = make ( map[string]CM)
+m["AL"] = CM { cs }
+fmt.Println( m["AL"].cs )
+
+
+mm := make( map[string][]string ) 
+mm["AL"] = push(mm["AL"], "message 1")
+mm["AL"] = push(mm["AL"], "message 2")
+mm["BOB"] = push(mm["BOB"], "message 1")
+fmt.Println(mm["AL"])
+
+//var  cm   CM
+//cm.cs = cs;
+//fmt.Println(cm)
 
 
 
