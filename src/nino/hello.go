@@ -54,13 +54,11 @@ func readALine()  {
 
 	
 func pop ( s [] string ) (string, []string ) {
-	
 	l:= len(s)
 	if ( l == 0 ){
 		return "", s[0:0]
 		}
 	return s[0], s[1: l]
-
 }
 
 func push ( s [] string, item string) []string {
@@ -94,14 +92,26 @@ m["AL"] = CM { cs }
 
 
 mm := make( map[string][]string ) 
+fmt.Println("length of map", len(mm))
+mm["AL"] = append(mm["AL"],"")
+pop(mm["AL"])
+fmt.Println( mm )
+
 mm["AL"] = append(mm["AL"], "message 1")
 mm["AL"] = append(mm["AL"], "message 2")
 mm["AL"] = append(mm["AL"], "message 3")
-mm["BOB"] = push(mm["BOB"], "message 1")
-
+mm["BOB"] = push(mm["BOB"], "Bob Message 111")
+mm["BOB"] = push(mm["BOB"], "Bob Message 222")
+fmt.Println("length of map", len(mm))
+for k, _ := range mm {
+	fmt.Println(k)
+}
+fmt.Println( len(mm["AL"]) )
+os.Exit(0)
+var ss string
 ss, mm["AL"] = pop(mm["AL"])
 fmt.Println(mm["AL"])
-
+fmt.Println(ss)
 //var  cm   CM
 //cm.cs = cs;
 //fmt.Println(cm)

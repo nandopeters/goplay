@@ -54,19 +54,21 @@ func iPad(ws *websocket.Conn) {
 	err := websocket.Message.Receive(ws, &who)
 	checkError(err)
 	fmt.Println("Connected to client :", who)
-
+	
+	msgq[who] = append(msgq[who], "")
+	pop(msgq[who])
+	
 	for s := range cs {
         fmt.Println("Sending: ", s)
         err := websocket.Message.Send(ws, s)
         checkError(err)
         }
-	
-
 }
 
 
 
 func writeChann (msg string) {
+	msgqInsert( msg )
 	cs <- msg
 }
 
@@ -103,20 +105,37 @@ func exit_handler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func main() {
 
+msgq := make( map[string][]string ) 
+func main() {
 
 	http.Handle("/phone", websocket.Handler(phone))
 	http.Handle("/iPad", websocket.Handler(iPad))
 	http.HandleFunc("/exit", exit_handler)
 	err := http.ListenAndServe(":9030", nil)
 	checkError(err)
-}
+	}
 
 func checkError(err error) {
 	if err != nil {
 		fmt.Println("Fatal error ", err.Error())
 		os.Exit(1)
-	}
+			}
 }
+
+func msgqInsert ( msg string) string {
+	for k, _ := range msgq {
+		append( msgq, msg )
+		}
+	return msg
+	}
+
+func pop ( s [] string ) (string, []string ) {
+	l:= len(s)
+	if ( l == 0 ){
+		return "", s[0:0]
+		}
+	return s[0], s[1: l]
+}
+
 
