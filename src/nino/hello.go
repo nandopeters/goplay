@@ -98,6 +98,8 @@ mm["AL"] = append(mm["AL"], "message 1")
 mm["AL"] = append(mm["AL"], "message 2")
 mm["AL"] = append(mm["AL"], "message 3")
 mm["BOB"] = push(mm["BOB"], "message 1")
+
+ss, mm["AL"] = pop(mm["AL"])
 fmt.Println(mm["AL"])
 
 //var  cm   CM
