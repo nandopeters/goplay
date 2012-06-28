@@ -66,7 +66,7 @@ func readALine()  {
 type CS struct {
 	name	string
 	msg 	[] string
-	*test 	func( a string )
+
 }
 	
 func pop ( s [] string ) (string, []string ) {
@@ -80,12 +80,12 @@ func push ( s [] string, item string) []string {
 	return append (s, item)
 	}
 	
-func CS.test ( a string ) {
-return "hello"
-}
 
 
 func main() {
+
+
+cs := new (CS)
 
 var s [] string
 var r string
