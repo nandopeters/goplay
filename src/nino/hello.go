@@ -90,12 +90,13 @@ cs.msg = push (cs.msg, "'message2 from AL'" )
 
 m = make ( map[string]CM)
 m["AL"] = CM { cs }
-fmt.Println( m["AL"].cs )
+//fmt.Println( m["AL"].cs )
 
 
 mm := make( map[string][]string ) 
-mm["AL"] = push(mm["AL"], "message 1")
-mm["AL"] = push(mm["AL"], "message 2")
+mm["AL"] = append(mm["AL"], "message 1")
+mm["AL"] = append(mm["AL"], "message 2")
+mm["AL"] = append(mm["AL"], "message 3")
 mm["BOB"] = push(mm["BOB"], "message 1")
 fmt.Println(mm["AL"])
 
