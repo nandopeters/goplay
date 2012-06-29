@@ -65,48 +65,112 @@ func push ( s [] string, item string) []string {
 	return append (s, item)
 	}
 	
-type CS struct {
-	name	string
-	msg 	[] string
 
-}
 
-type CM struct {
-	 cs 	*CS
+type ACHAN struct {
+	Q		chan string
 	}
+type CHAN2 struct {
+	q map[string]ACHAN
+	}
+	
+var	ac ACHAN
 
-var m map[string]CM
 
+func doit (c chan string )  {
+	c <- "msg 1"
+	c <- "msg 2"
+	}
+func  (cm *CHAN2) initQ2 ( ) {
+	cm.q = make(map[string]ACHAN)
+	}
+func  (cm *CHAN2) popQ2 ( who string ) string {
+	return <- cm.q[who].Q
+	}
+func  (cm *CHAN2) popAllQ2 ( who string )  {
+		for s := range cm.q[who].Q {
+			fmt.Println("pop:",s)
+		}
+	}
+func  (cm CHAN2) addQ2 ( who string) {
+	cm.q[who] = ACHAN{  make(chan string) }
+	}
+func  addQ (  q map[string]ACHAN, who string) {
+	q[who] = ACHAN{  make(chan string) }
+	}
+func setQ ( q map[string]ACHAN, who string) chan string {
+	return q[who].Q
+}
 func main() {
-cs := new (CS)
+
+/*
+var c map[string]chan string
+c = make(map[string]chan string)
+c["AL"] = make(chan string)
+go doit(c["AL"])
+
+ fmt.Println(<-c["AL"])
+ fmt.Println(<-c["AL"])
+*/
 
 
-cs.name = "AL"
-cs.msg = push (cs.msg, "'message1 from AL'" )
-cs.msg = push (cs.msg, "'message2 from AL'" )
+//var c map[string]ACHAN
+//c = make(map[string]ACHAN)
+//c["AL"]  = ACHAN{  make(chan string) }
+//c["BOB"] = ACHAN{  make(chan string) }
 
+var c CHAN2
+c.initQ2()
+c.addQ2("AL")
+c.addQ2("BOB")
+go doit( c.q["AL"].Q)
+go doit( c.q["BOB"].Q)
 
-m = make ( map[string]CM)
-m["AL"] = CM { cs }
-//fmt.Println( m["AL"].cs )
+//fmt.Println(c.popQ2("AL"));
+//fmt.Println(c.popQ2("AL"))
+//c.addQ2("AL")
+fmt.Println(c.popQ2("BOB"))
+fmt.Println("Len :", cap(c.q["BOB"].Q) )
+fmt.Println(c.popQ2("BOB"))
+fmt.Println("Len :", len(c.q["BOB"].Q) )
+fmt.Println(c)
+/*
+addQ( c, "AL" )
+addQ( c, "BOB" )
+fmt.Println(c)
+
+go doit( c["AL"].Q ) 
+go doit( c["BOB"].Q ) 
+
+ fmt.Println(<-c["AL"].Q)
+ fmt.Println(<-c["AL"].Q)
+
+ fmt.Println(<-c["BOB"].Q)
+ fmt.Println(<-c["BOB"].Q)
+ 
+ fmt.Println( len(c) )
+delete(c, "BOB")
+delete(c, "BOB")
+ fmt.Println( len (c) )
+*/
+ 
+ os.Exit(0)
+ 
+achan := make ( map[string] []ACHAN)
+
+achan["AL"] = append(achan["AL"], ac )
+fmt.Println(achan)
 
 
 mm := make( map[string][]string ) 
-fmt.Println("length of map", len(mm))
 mm["AL"] = append(mm["AL"],"")
 pop(mm["AL"])
-fmt.Println( mm )
-
 mm["AL"] = append(mm["AL"], "message 1")
-mm["AL"] = append(mm["AL"], "message 2")
-mm["AL"] = append(mm["AL"], "message 3")
 mm["BOB"] = push(mm["BOB"], "Bob Message 111")
-mm["BOB"] = push(mm["BOB"], "Bob Message 222")
-fmt.Println("length of map", len(mm))
-for k, _ := range mm {
-	fmt.Println(k)
-}
-fmt.Println( len(mm["AL"]) )
+
+
+
+
 os.Exit(0)
 var ss string
 ss, mm["AL"] = pop(mm["AL"])

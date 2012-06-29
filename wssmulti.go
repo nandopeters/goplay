@@ -39,6 +39,7 @@ func phone(ws *websocket.Conn) {
 	fmt.Println("Unmarshalled:  ")
 	fmt.Println( m, "\n" );
 
+	msgqInsert( msg )
 	writeChann(reply)
 
 }
@@ -57,18 +58,19 @@ func iPad(ws *websocket.Conn) {
 	
 	msgq[who] = append(msgq[who], "")
 	pop(msgq[who])
-	
+	fmt.Println( "iPad :", msgq )
+
 	for s := range cs {
         fmt.Println("Sending: ", s)
         err := websocket.Message.Send(ws, s)
         checkError(err)
         }
+     fmt.Println("DONE");
 }
 
 
 
 func writeChann (msg string) {
-	msgqInsert( msg )
 	cs <- msg
 }
 
@@ -105,9 +107,10 @@ func exit_handler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+var	msgq   map[string][]string 
 
-msgq := make( map[string][]string ) 
 func main() {
+msgq = make( map[string][]string )
 
 	http.Handle("/phone", websocket.Handler(phone))
 	http.Handle("/iPad", websocket.Handler(iPad))
@@ -125,7 +128,7 @@ func checkError(err error) {
 
 func msgqInsert ( msg string) string {
 	for k, _ := range msgq {
-		append( msgq, msg )
+		msgq[k] = append( msgq[k], msg )
 		}
 	return msg
 	}
