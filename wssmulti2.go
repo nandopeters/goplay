@@ -16,6 +16,12 @@ type Message struct {
 		DT	string
 	}
 
+type AppChannelQ struct {
+	chanQ map[string]chan string
+	}
+	
+var msgQ	AppChannelQ
+
 var cs = make(chan string)
 var inMsgNo = 1
 var outMsgNo = 1
@@ -39,12 +45,10 @@ func phone(ws *websocket.Conn) {
 	fmt.Println("Unmarshalled:  ")
 	fmt.Println( m, "\n" );
 
-	msgqInsert( msg )
-	writeChann(reply)
+	msgQ.insertMsgAllQ( reply )
+	//writeChann(reply)
 
 }
-
-
 
 func iPad(ws *websocket.Conn) {
 	
@@ -56,28 +60,16 @@ func iPad(ws *websocket.Conn) {
 	checkError(err)
 	fmt.Println("Connected to client :", who)
 	
-	msgq[who] = append(msgq[who], "")
-	pop(msgq[who])
-	fmt.Println( "iPad :", msgq )
+	msgQ.addQ( who )
+	//msgQ.popQ()
+	fmt.Println( "iPad :", msgQ )
 
-	for s := range cs {
-        fmt.Println("Sending: ", s)
+	for s := range msgQ.chanQ[who] {
+        fmt.Println("Sending to '",who, "': ", s)
         err := websocket.Message.Send(ws, s)
         checkError(err)
         }
      fmt.Println("DONE");
-}
-
-
-
-func writeChann (msg string) {
-	cs <- msg
-}
-
-func readChann() {
-	for s := range cs {
-        fmt.Println("Received msg: ", s)
-        }
 }
 
 func decode(jmsg string) Message {
@@ -107,12 +99,10 @@ func exit_handler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-var	msgq   BCHAN
-
 func main() {
-msgq = make( map[string][]string )
-msgq.initQ()
-msgq.add("DB")
+//msgQ = make( map[string][]string )
+msgQ.initQ()
+msgQ.addQ("DB")
 
 	http.Handle("/phone", websocket.Handler(phone))
 	http.Handle("/iPad", websocket.Handler(iPad))
@@ -128,39 +118,44 @@ func checkError(err error) {
 			}
 }
 
-func msgqInsert ( msg string) string {
-	for k, _ := range msgq {
-		msgq[k] = append( msgq[k], msg )
-		}
-	return msg
+
+
+//----------------------------------
+
+func  (cq *AppChannelQ) initQ ( ) {
+	cq.chanQ = make(map[string]chan string)
 	}
 
-func pop ( s [] string ) (string, []string ) {
-	l:= len(s)
-	if ( l == 0 ){
-		return "", s[0:0]
-		}
-	return s[0], s[1: l]
+func  (cq AppChannelQ) addQ ( who string) {
+	cq.chanQ[who] =  make(chan string) 
+	}
+
+func  (cq *AppChannelQ) popQ ( who string ) string {
+	return <- cq.chanQ[who]
 }
 
-type BCHAN struct {
-	q map[string]chan string
-	}
-func  (cm *BCHAN) initQ ( ) {
-	cm.q = make(map[string]chan string)
-	}
-
-func  (cm BCHAN) addQ ( who string) {
-	cm.q[who] =  make(chan string) 
-	}
-
-func  (cm *BCHAN) popQ ( who string ) string {
-	return <- cm.q[who]
-}
-
-func  (cm *BCHAN) popAllQ ( who string )  {
-		for s := range cm.q[who] {
+func  (cq *AppChannelQ) popAllQ ( who string )  {
+		for s := range cq.chanQ[who] {
 			fmt.Println("pop:",s)
 		}
 	}
+	
+func  (cq *AppChannelQ ) insertMsgAllQ( msg string) {
+	for k, _ := range cq.chanQ {
+		fmt.Println("insertMsgAllQ:  k=",k);
+		//cq.chanQ[k] = append( cq.chanQ[k], msg )
+		cq.chanQ[k] <- msg
+		}
+	}
+
+//----------------------------------------------
+func writeChann (msg string) {
+	cs <- msg
+}
+
+func readChann() {
+	for s := range cs {
+        fmt.Println("Received msg: ", s)
+        }
+}
 
