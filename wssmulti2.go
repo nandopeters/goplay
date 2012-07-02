@@ -102,7 +102,8 @@ func exit_handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 //msgQ = make( map[string][]string )
 msgQ.initQ()
-msgQ.addQ("DB")
+//msgQ.addQ("DB")
+  go msgQ.doDBQ()
 
 	http.Handle("/phone", websocket.Handler(phone))
 	http.Handle("/iPad", websocket.Handler(iPad))
@@ -147,6 +148,14 @@ func  (cq *AppChannelQ ) insertMsgAllQ( msg string) {
 		cq.chanQ[k] <- msg
 		}
 	}
+	
+func (cq *AppChannelQ) doDBQ() {
+	who := "DB"
+	cq.addQ(who)
+	for s := range msgQ.chanQ[who] {
+        fmt.Println("THIS IS DB Q: ", s)
+        }
+ 	}
 
 //----------------------------------------------
 func writeChann (msg string) {
