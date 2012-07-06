@@ -7,6 +7,7 @@ import (
 	"os"
 	"encoding/json"
 	"code.google.com/p/go.net/websocket"
+	"strconv"
 )
 
 type Message struct {
@@ -46,7 +47,6 @@ func phone(ws *websocket.Conn) {
 	fmt.Println( m, "\n" );
 
 	msgQ.insertMsgAllQ( reply )
-	//writeChann(reply)
 
 }
 
@@ -152,19 +152,27 @@ func  (cq *AppChannelQ ) insertMsgAllQ( msg string) {
 func (cq *AppChannelQ) doDBQ() {
 	who := "DB"
 	cq.addQ(who)
+	fName := "DB.log"
 	for s := range msgQ.chanQ[who] {
-        fmt.Println("THIS IS DB Q: ", s)
+		line := "DB Msg: " + strconv.Itoa(inMsgNo) + s +"\n"
+		myFileAppendLine(fName, line )
         }
  	}
 
-//----------------------------------------------
-func writeChann (msg string) {
-	cs <- msg
-}
 
-func readChann() {
-	for s := range cs {
-        fmt.Println("Received msg: ", s)
-        }
-}
+//-------------------
+func myFileAppendLine ( fName string, line string )  {
+	
+	f, err := os.OpenFile(fName, os.O_WRONLY , 644)
+	if( err != nil ) {
+		f, err = os.Create(fName)
+		checkError(err)
+		}else {
+			_, err = f.Seek(0, os.SEEK_END)
+		}
+	fmt.Println("*File:", f )
+	
+	_, err = f.WriteString(line)
 
+	f.Close()
+}
