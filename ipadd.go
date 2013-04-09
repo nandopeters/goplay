@@ -32,11 +32,11 @@ func main() {
 		who = "ALFONSO"
 		}
 	
-	service := "ws://localhost:9030/iPad"
+	service := "ws://dev.itelehome.com:9030/iPad"
 
 
 	//Connect
-	conn, err := websocket.Dial(service, "", "http://localhost")
+	conn, err := websocket.Dial(service, "", "http://dev.itelehome.com")
 	checkError(err)
 	
 	fmt.Println("Connected");

@@ -27,6 +27,25 @@ var cs = make(chan string)
 var inMsgNo = 1
 var outMsgNo = 1
 
+func rootH(ws *websocket.Conn) {
+	
+	//Receive Message	
+	var reply string
+	err := websocket.Message.Receive(ws, &reply)
+	checkError(err)
+	fmt.Println("root msg received:", inMsgNo)
+	fmt.Println( reply )
+
+	
+	//Send Message
+	msg := "ACK"
+	err = websocket.Message.Send(ws, msg)
+	checkError(err)
+	
+}
+
+
+
 func phone(ws *websocket.Conn) {
 	
 	//Receive Message	
@@ -47,7 +66,76 @@ func phone(ws *websocket.Conn) {
 	fmt.Println( m, "\n" );
 
 	msgQ.insertMsgAllQ( reply )
+}
 
+func itelMessages(ws *websocket.Conn) {
+	
+	//Receive Message	
+	var reply string
+	for{
+		err := websocket.Message.Receive(ws, &reply)
+		checkError(err)
+		fmt.Println("Received Message No:", inMsgNo)
+		fmt.Println( reply )
+		inMsgNo++
+	
+		//Send Message
+		msg := "ACK"
+
+		err = websocket.Message.Send(ws, msg)
+		checkError(err)
+	
+		m := decode(reply)
+		fmt.Println("Unmarshalled:  ")
+		fmt.Println( m, "\n" );
+
+		msgQ.insertMsgAllQ( reply )
+	}
+}
+
+func itelMessages0(ws *websocket.Conn) {
+	
+	//Receive Message	
+	var reply string
+	who := "DB";
+
+	err := websocket.Message.Receive(ws, &reply)
+	checkError(err)
+	fmt.Println("Connected to client :", reply)
+	msgQ.insertMsgAllQ( reply )
+	msgQ.addQ( who )
+	//msgQ.popQ()
+	fmt.Println( "iPad :", msgQ )
+
+	for s := range msgQ.chanQ[who] {
+		fmt.Println("Sending to '",who, "': ", s)
+		err := websocket.Message.Send(ws, s)
+		checkError(err)
+        }
+     fmt.Println("DONE");
+}
+
+
+func iPad2(ws *websocket.Conn) {
+	
+	//Receive Message	
+	
+	who := "DB";
+/*
+	err := websocket.Message.Receive(ws, &who)
+	checkError(err)
+	fmt.Println("Connected to client :", who)
+*/	
+	msgQ.addQ( who )
+	//msgQ.popQ()
+	fmt.Println( "iPad :", msgQ )
+
+	for s := range msgQ.chanQ[who] {
+        fmt.Println("Sending to '",who, "': ", s)
+        err := websocket.Message.Send(ws, s)
+        checkError(err)
+        }
+     fmt.Println("DONE");
 }
 
 func iPad(ws *websocket.Conn) {
@@ -107,7 +195,10 @@ msgQ.initQ()
 
 	http.Handle("/phone", websocket.Handler(phone))
 	http.Handle("/iPad", websocket.Handler(iPad))
+	http.Handle("/iPad2", websocket.Handler(iPad2))
+	http.Handle("/itelMessages", websocket.Handler(itelMessages))
 	http.HandleFunc("/exit", exit_handler)
+	http.Handle("/", websocket.Handler(rootH))
 	err := http.ListenAndServe(":9030", nil)
 	checkError(err)
 	}
