@@ -17,15 +17,49 @@ type Message struct {
 		DT	string
 	}
 
+
+/*
+messagetype:
+location			payload { session_id, datetime, latitude, longitude, msg }
+broadcast			payload { session_id, datetime, msg }
+join_session		payload { session_id, datetime,	msg }
+leave_session		payload { session_id, datetime,	msg }
+session_ended		payload { session_id, datetime, msg }
+session_started		payload { session_id, datetime, msg }
+session_paused		payload { session_id, datetime, msg }
+session_resumed		payload { session_id, datetime, elapsedtime, msg }
+chat_msg			payload { session_id, datetime, msg }
+list_participants	payload { session_id, participants [] }
+query_participants	payload { session_id }
+url					payload {session_id, url }
+*/
+
+
+type participants	struct {
+	Particiapants	string
+	}
+
 type Load	struct {
-		Schedule_id	string
-		Msg			string
+		Session_id		string
+		Latitude		string
+		Longitude		string
+		Datetime		string
+		Msg				string
+		Participants	participants
+		Url				string
 		}
-		
+				
 type MM struct {
-		Msgtype	string
-		Payload	Load
-		}
+	Msgtype		string
+	Broadcast	string	// Y
+	Key			string
+	From		string
+	To			string
+	Payload		Load
+	}
+
+
+
 
 type AppChannelQ struct {
 	chanQ map[string]chan string
@@ -93,8 +127,9 @@ func itelMessages(ws *websocket.Conn) {
 		err1 := json.Unmarshal([]byte(reply), &m)
 		checkError(err1)
 		fmt.Println("Unmarshalled m:", m);
-		
-		//Send Message
+		if m.Msgtype=="join_session" {
+			fmt.Println("Msgtype:",m.Msgtype);
+			}
 		msg := "ACK"
 
 		err = websocket.Message.Send(ws, msg)

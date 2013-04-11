@@ -46,7 +46,7 @@ function iWS( server_service ){
 	            return false;
 	        }
 
-			var pMsg = '{"msgtype":"join_session","payload":{"schedule_id":"51"} }';
+			var pMsg = '{"msgtype":"join_session","payload":{"session_id":"51", "msg":"hei there baby"} }';
 			conn.send(pMsg);
 
 	        return false
