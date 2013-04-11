@@ -28,7 +28,7 @@
     });
 
     if (window["WebSocket"]) {
-        conn = new WebSocket("ws://dev.itelehome.com:9030/iPad");
+        conn = new WebSocket("ws://dev.itelehome.com:9030/iPad2");
         conn.onclose = function(evt) {
             appendLog($("<div><b>Connection closed.</b></div>"))
         }
