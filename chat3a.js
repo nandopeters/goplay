@@ -43,11 +43,13 @@ function iWS( server_service ){
 	    $("#form").submit(function() {
 	    	console.log('submit');
 	        if (!conn) {
+	        	console.log('conn is NULL');
 	            return false;
 	        }
 
 			var pMsg = '{"msgtype":"join_session","payload":{"session_id":"51", "msg":"hei there baby"} }';
-			conn.send(pMsg);
+			console.log('conn is true.  msg=',pMsg);
+			this.conn.send(pMsg);
 
 	        return false
 	    });

@@ -19,18 +19,37 @@
    	    	}
    		};    	
     	
-    	
 	var ws = new iWS("ws://dev.itelehome.com:9030/itelPublishOnce");
-
-
 	ws.setDisplayFunc(showshow);
 	
 	var pMsg = '{"msgtype":"join_session","payload":{"session_id":"51", "msg":"hei there baby"} }';
 	ws.start( pMsg );
-
-    	
+	
     });
 
+    $(function() {
+
+    	
+       function showshow	(logDiv, msg) {
+      	    var d = logDiv[0]
+      	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
+      	    logDiv.append(msg+"<br>");
+      	    if (doScroll) {
+      	        d.scrollTop = d.scrollHeight - d.clientHeight;
+      	    	}
+      		};    	
+       	
+       	
+   	var ws = new iWS("ws://dev.itelehome.com:9030/iPad");
+
+
+   	ws.setDisplayFunc(showshow);
+   	
+   	var pMsg = 'MAKUMBA';
+   	ws.start( pMsg );
+
+       	
+       });
 
 
 

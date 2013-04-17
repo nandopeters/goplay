@@ -114,13 +114,8 @@ func itelPublishOnce(ws *websocket.Conn) {
 		var	m Message
 		err1 := json.Unmarshal([]byte(reply), &m)
 		checkError(err1)
-		fmt.Println("Unmarshalled m:", m);
-		if m.Msgtype=="join_session" {
-			fmt.Println("Msgtype:",m.Msgtype);
-			}
-		msg := "ACK"
 
-		err = websocket.Message.Send(ws, msg)
+		err = websocket.Message.Send(ws, "ACK")
 		checkError(err)
 	
 		msgQ.insertMsgAllQ( reply )
@@ -202,7 +197,7 @@ func  (cq *AppChannelQ) popAllQ ( who string )  {
 	
 func  (cq *AppChannelQ ) insertMsgAllQ( msg string) {
 	for k, _ := range cq.chanQ {
-		fmt.Println("insertMsgAllQ:  k=",k);
+		
 		//cq.chanQ[k] = append( cq.chanQ[k], msg )
 		cq.chanQ[k] <- msg
 		}
@@ -229,7 +224,6 @@ func myFileAppendLine ( fName string, line string )  {
 		}else {
 			_, err = f.Seek(0, os.SEEK_END)
 		}
-	fmt.Println("*File:", f )
 	
 	_, err = f.WriteString(line)
 
