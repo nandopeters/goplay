@@ -1,0 +1,37 @@
+
+
+
+messagetype:
+location			payload { session_id, datetime, latitude, longitude, msg }
+broadcast			payload { session_id, datetime, msg }
+join_session		payload { session_id, datetime,	msg }
+leave_session		payload { session_id, datetime,	msg }
+session_ended		payload { session_id, datetime, msg }
+session_started		payload { session_id, datetime, msg }
+session_paused		payload { session_id, datetime, msg }
+session_resumed		payload { session_id, datetime, elapsedtime, msg }
+chat_msg			payload { session_id, datetime, msg }
+list_participants	payload { session_id, participants [] }
+query_participants	payload { session_id }
+url					payload {session_id, url }
+
+
+e.g.
+	{
+	messagetype: 	"url",
+	payload:		{ 
+					session_id: "51",
+					url: "http://www.nytimes.com"
+					}
+ 	}
+
+	{	
+	messagetype:	"location",
+	payload:		{
+					session_id: "51",
+					datetime: "2013-05-12 13:51:33",
+					latitude: "33.123456",
+					longitude:"-112.123456",
+					msg: "this is a test message that we can optionally append"
+					}
+	}
