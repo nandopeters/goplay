@@ -82,23 +82,6 @@ func rootH(ws *websocket.Conn) {
 
 
 
-func phone(ws *websocket.Conn) {
-	
-	//Receive Message	
-	var reply string
-	err := websocket.Message.Receive(ws, &reply)
-	checkError(err)
-	fmt.Println("Received Message No:", inMsgNo)
-	fmt.Println( reply )
-	inMsgNo++
-	
-	//Send Message
-	msg := "ACK"
-	err = websocket.Message.Send(ws, msg)
-	checkError(err)
-
-	msgQ.insertMsgAllQ( reply )
-}
 
 func itelPublishOnce(ws *websocket.Conn) {
 	
@@ -135,9 +118,9 @@ func Publish(ws *websocket.Conn) {
 				fmt.Println("Error = ", err.Error() );
 				return;
 				}
-			//checkError2(err)
+
 			fmt.Println("Received Message No:", inMsgNo)
-			//fmt.Println( reply )
+
 			inMsgNo++
 			
 			var	m Message
@@ -153,25 +136,8 @@ func Publish(ws *websocket.Conn) {
 	fmt.Println("\n Exiting Publiss() \n\n");
 }
 
-func iPad2(ws *websocket.Conn) {
-	
-	//Receive Message	
-	
-	who := "DB";
 
-	msgQ.addQ( who )
-	
-	fmt.Println( "iPad :", msgQ )
-
-	for s := range msgQ.chanQ[who] {
-        fmt.Println("Sending to '",who, "': ", s)
-        err := websocket.Message.Send(ws, s)
-        checkError(err)
-        }
-     fmt.Println("DONE");
-}
-
-func iPad(ws *websocket.Conn) {
+func Subscribe(ws *websocket.Conn) {
 	
 	//Receive Message	
 	// iPad identifies itself by sending it's id (who)
@@ -266,10 +232,8 @@ func main() {
 	
 	go msgQ.doDBQ()
 
-	http.Handle("/phone", websocket.Handler(phone))
-	http.Handle("/iPad", websocket.Handler(iPad))
-	http.Handle("/iPad2", websocket.Handler(iPad2))
-	http.Handle("/itelPublishOnce", websocket.Handler(Publish))
+	http.Handle("/Subscribe", websocket.Handler(Subscribe))
+	http.Handle("/itelPublishOnce", websocket.Handler(itelPublishOnce))
 	http.Handle("/Publish", websocket.Handler(Publish))
 	http.HandleFunc("/exit", exit_handler)
 	http.Handle("/", websocket.Handler(rootH))

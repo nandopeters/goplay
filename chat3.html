@@ -7,28 +7,43 @@
 <script type="text/javascript">
 
 
-    $(function() {
 
+    function Publish(){
     	
-    function showshow	(logDiv, msg) {
-   	    var d = logDiv[0]
-   	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-   	    logDiv.append(msg+"<br>");
-   	    if (doScroll) {
-   	        d.scrollTop = d.scrollHeight - d.clientHeight;
-   	    	}
-   		};    	
-    	
-	var ws = new iWS("ws://dev.itelehome.com:9030/itelPublishOnce");
-	ws.setDisplayFunc(showshow);
-	
-	var pMsg = '{"msgtype":"join_session","payload":{"session_id":"51", "msg":"hei there baby"} }';
-	ws.start( pMsg );
-	
-    });
+        function showshow	(logDiv, msg) {
+       	    var d = logDiv[0]
+       	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
+       	    logDiv.append(msg+"<br>");
+       	    if (doScroll) {
+       	        d.scrollTop = d.scrollHeight - d.clientHeight;
+       	    	}
+       		};    	
+        	
 
-    $(function() {
+ 	   	 var ws = new iWS("ws://dev.itelehome.com:9030/Publish");
+ 	
+ 	
+ 	   	ws.setDisplayFunc(showshow);
 
+ 	   	ws.start(  );
+ 	
+ 	   	
+ 	   	$("#sendMsg").click( function()
+ 	            {
+ 	   var pMsg = 	'{"msgtype":"join_session","payload":{"session_id":"51", "msg":"hei there baby"} }';
+ 	   			console.log("just clicked");
+ 				ws.Send(pMsg);
+ 	      		});
+ 	   	
+ 	   	$("#close").click( function()
+ 	            {
+ 	  			console.log("just clicked close");
+ 				ws.Close();
+ 	      		});
+
+     }
+    
+    function Subscribe(){
     	
        function showshow	(logDiv, msg) {
       	    var d = logDiv[0]
@@ -39,20 +54,28 @@
       	    	}
       		};    	
        	
-       	
-   	var ws = new iWS("ws://dev.itelehome.com:9030/iPad");
+
+	   	var ws = new iWS("ws://dev.itelehome.com:9030/Subscribe");
+	
+	
+	   	ws.setDisplayFunc(showshow);
+	    var pMsg = 'MAKUMBA';
+	   	ws.start( pMsg );
+	
+    }
 
 
-   	ws.setDisplayFunc(showshow);
-   	
-   	var pMsg = 'MAKUMBA';
-   	ws.start( pMsg );
+$(document).ready(function () {
+	Publish();
+	Subscribe();
+	
+	
+});
 
-       	
-       });
+function sendIt() {
 
-
-
+	
+}
 
 </script>
 <style type="text/css">
@@ -97,8 +120,9 @@ body {
 <div id = "errMsg">THIS IS THE NINO VERSION<br></div>
 <div id="log"></div>
 <form id="form">
-    <input type="submit" value="Send" />
+    <input id='sendMsg' type="button" value="Send" />
     <input type="text" id="msg" size="64"/>
+    <button id='close' >Close</button>
 </form>
 </body>
 </html>

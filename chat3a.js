@@ -39,20 +39,21 @@ function iWS( server_service ){
 		{
 	    	appendLog(displayDivId,$("<div><b>Your browser does not support WebSockets.</b></div>"));
 		}
-	    
+	    /*
 	    $("#form").submit(function() {
 	    	console.log('submit');
 	        if (!conn) {
 	        	console.log('conn is NULL');
 	            return false;
 	        }
-
+	        console.log("msg typed:",$("#msg").val() );
 			var pMsg = '{"msgtype":"join_session","payload":{"session_id":"51", "msg":"hei there baby"} }';
 			console.log('conn is true.  msg=',pMsg);
 			this.conn.send(pMsg);
 
 	        return false
 	    });
+	    **/
 	};  
 	
 	
@@ -65,13 +66,21 @@ function iWS( server_service ){
 	function addOnOpen( message ){
 		conn.onopen = function (evt) {
 			console.log("onopen",evt);
-			conn.send(message);
+			if ( typeof message === 'undefined') 
+				; // do nothing
+			else
+				conn.send(message);
 		};
 	};
 	
 	this.Send = function ( message){
 		conn.send(message);
 	};
+	
+	this.Close = function ( ){
+		conn.close();
+	};
+	
 	
 	function addOnError(  ){
 		conn.onerror = function (evt) {
