@@ -28,29 +28,29 @@ url					payload {session_id, url }
 */
 
 
-type participants	struct {
-	Particiapants	string
+type parts	struct {
+	Users	string
 	}
 
-type Load	struct {
+type load	struct {
 		Session_id		string
 		Latitude		string
 		Longitude		string
 		Datetime		string
+		Elapsedtime		string
 		Msg				string
-		Participants	participants
+		Participants	[]parts
 		Url				string
 		}
-				
-type Message struct {
-	Msgtype		string
-	Broadcast	string	// Y
-	Key			string
-	From		string
-	To			string
-	Payload		Load
-	}
 
+type Message struct {
+Messagetype		string
+Broadcast		string	// Y
+Key				string
+From			string
+To				string
+Payload			load
+}
 
 
 
@@ -126,7 +126,7 @@ func Publish(ws *websocket.Conn) {
 			var	m Message
 			err1 := json.Unmarshal([]byte(reply), &m)
 			checkError2(err1)
-
+			fmt.Println("Unmarshalled:", m);
 			
 			err = websocket.Message.Send(ws, "ACK")
 			checkError(err)

@@ -1,0 +1,142 @@
+<html>
+<head>
+<title>Chat Example2222222222</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="chat5.js"></script>
+
+<script type="text/javascript">
+
+
+
+    function Publish(){
+    	
+        function showshow	(logDiv, msg) {
+       	    var d = logDiv[0]
+       	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
+       	    logDiv.append(msg+"<br>");
+       	    if (doScroll) {
+       	        d.scrollTop = d.scrollHeight - d.clientHeight;
+       	    	}
+       		};    	
+        	
+
+ 	   	 var ws = new iWS("ws://dev.itelehome.com:9030/Publish");
+ 	
+ 	
+ 	   	ws.setDisplayFunc(showshow);
+
+ 	   	ws.start(  );
+ 		ws.addOnMessage2( msgHandler );
+ 	   	
+ 	   	$("#sendMsg").click( function()
+ 	            {
+ 	   	var pMsg = 	'{';
+ 	   		pMsg +=		'"messagetype":"join_session"';
+ 	   		pMsg +=		',"key":"axDRttOVw123444"';
+ 	   		pMsg +=		',"from":"Rocco"';
+ 	   		pMsg +=		',"to": "Tino"';
+ 	  		pMsg += 	',"payload":{';
+ 	  		pMsg +=		' "session_id":"51" ';
+ 	  		pMsg +=		',"url":"http://www.itelepsych.com"';		
+ 	  		pMsg +=		',"msg":"hei there baby"';
+ 	  		pMsg +=		',"participants":[{"users": "U1"} ';
+ 	  		pMsg +=						',{"users": "U2"} ';
+ 	  		pMsg +=						',{"users": "U3"} ';
+ 	  		pMsg +=						']';
+ 	  		pMsg +=					'}';
+ 	   		pMsg +=		'}';
+ 				ws.Send(pMsg);
+ 	      		});
+ 	   	
+ 	   	$("#close").click( function()
+ 	            {
+ 	  			console.log("just clicked close");
+ 				ws.Close();
+ 	      		});
+
+     }
+    
+    function Subscribe(){
+    	
+       function showshow	(logDiv, msg) {
+      	    var d = logDiv[0]
+      	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
+      	    logDiv.append(msg+"<br>");
+      	    if (doScroll) {
+      	        d.scrollTop = d.scrollHeight - d.clientHeight;
+      	    	}
+      		};    	
+       	
+
+	   	var ws = new iWS("ws://dev.itelehome.com:9030/Subscribe");
+	
+	
+	   	ws.setDisplayFunc(showshow);
+	    var pMsg = 'MAKUMBA';
+	   	ws.start( pMsg );
+	
+    }
+
+
+$(document).ready(function () {
+	Publish();
+	Subscribe();
+	
+	
+});
+
+function sendIt() {
+
+	
+}
+
+</script>
+<style type="text/css">
+html {
+    overflow: hidden;
+}
+
+body {
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: gray;
+}
+
+#log {
+    background: white;
+    margin: 0;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    position: absolute;
+    top: 5.5em;
+    left: 0.5em;
+    right: 0.5em;
+    bottom: 3em;
+    overflow: auto;
+}
+
+#form {
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+    position: absolute;
+    bottom: 1em;
+    left: 0px;
+    width: 100%;
+    overflow: hidden;
+}
+
+</style>
+</head>
+<body>
+<div id = "errMsg">THIS IS THE NINO VERSION<br></div>
+<div id="log"></div>
+<form id="form">
+    <input id='sendMsg' type="button" value="Send" />
+    <input type="text" id="msg" size="64"/>
+    <button id='close' >Close</button>
+</form>
+</body>
+</html>
+
