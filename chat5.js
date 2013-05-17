@@ -6,9 +6,7 @@ function iWS( server_service ){
 	//var	displayDivId = $("<div>");
 	var displayDivId = $("#log");
 	
-	setDisplayDiv( displayDivId );
-	
-
+	setDisplayDiv( displayDivId );	
 
 	this.setDisplayFunc = function( func ){
 		if (func == null)
@@ -43,7 +41,7 @@ function iWS( server_service ){
 
 			addOnClose();
 			addOnError();
-			addOnMessage();
+			//addOnMessage();
 			addOnOpen(message);
 	    }
 	    else	
@@ -130,9 +128,4 @@ function iWS( server_service ){
 	};
 	
 };
-
-function msgHandler(evt){
-	console.log("inside msgHandler.  evt=", evt);
-	console.log("inside msgHandler. evt", evt.data);
-}
 

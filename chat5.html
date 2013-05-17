@@ -5,21 +5,11 @@
 <script type="text/javascript" src="chat5.js"></script>
 
 <script type="text/javascript">
-//var SERVER = '';
+var SERVER = 'dev.itelehome.com';
 
 
     function Publish(){
     	
-        function showshow	(logDiv, msg) {
-       	    var d = logDiv[0]
-       	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-       	    logDiv.append(msg+"<br>");
-       	    if (doScroll) {
-       	        d.scrollTop = d.scrollHeight - d.clientHeight;
-       	    	}
-       		};    	
-        	
-
  	   	 var ws = new iWS("ws://"+SERVER+":9030/Publish");
  		console.log(ws);
  		
@@ -58,16 +48,6 @@
      }
     
     function Subscribe(){
-    	
-       function showshow	(logDiv, msg) {
-      	    var d = logDiv[0]
-      	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-      	    logDiv.append(msg+"<br>");
-      	    if (doScroll) {
-      	        d.scrollTop = d.scrollHeight - d.clientHeight;
-      	    	}
-      		};    	
-       	
 
 	   	var ws = new iWS("ws://"+SERVER+":9030/Subscribe");
 	
@@ -75,9 +55,18 @@
 	   	ws.setDisplayFunc(showshow);
 	    var pMsg = 'MAKUMBA';
 	   	ws.start( pMsg );
-	
+ 		ws.addOnMessage2( msgSubscribeHandler );
     }
 
+    function showshow	(logDiv, msg) {
+  	    var d = logDiv[0]
+  	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
+  	    logDiv.append(msg+"<br>");
+  	    if (doScroll) {
+  	        d.scrollTop = d.scrollHeight - d.clientHeight;
+  	    	}
+  		};    	
+   	
 
 $(document).ready(function () {
 	
@@ -98,6 +87,16 @@ $(document).ready(function () {
 	
 	
 });
+
+function msgHandler(evt){
+	console.log("inside msgHandler. evt", evt.data);
+	showshow($("#log"), evt.data);
+}
+
+function msgSubscribeHandler(evt){
+	console.log("inside msgSubscribeHandler. evt", evt.data);
+	showshow($("#log"), evt.data);
+}
 
 function sendIt() {
 

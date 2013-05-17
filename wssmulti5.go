@@ -128,8 +128,8 @@ func Publish(ws *websocket.Conn) {
 			checkError2(err1)
 			fmt.Println("Unmarshalled:", m);
 			
-			err = websocket.Message.Send(ws, "ACK")
-			checkError(err)
+		//	err = websocket.Message.Send(ws, "ACK")
+		//	checkError(err)
 		
 			msgQ.insertMsgAllQ( reply )
 		}
