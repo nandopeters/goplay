@@ -5,7 +5,7 @@
 <script type="text/javascript" src="chat5.js"></script>
 
 <script type="text/javascript">
-
+//var SERVER = '';
 
 
     function Publish(){
@@ -20,8 +20,9 @@
        		};    	
         	
 
- 	   	 var ws = new iWS("ws://dev.itelehome.com:9030/Publish");
- 	
+ 	   	 var ws = new iWS("ws://"+SERVER+":9030/Publish");
+ 		console.log(ws);
+ 		
  	
  	   	ws.setDisplayFunc(showshow);
 
@@ -68,7 +69,7 @@
       		};    	
        	
 
-	   	var ws = new iWS("ws://dev.itelehome.com:9030/Subscribe");
+	   	var ws = new iWS("ws://"+SERVER+":9030/Subscribe");
 	
 	
 	   	ws.setDisplayFunc(showshow);
@@ -79,6 +80,19 @@
 
 
 $(document).ready(function () {
+	
+	
+	if (typeof SERVER === 'undefined')
+		SERVER='localhost';
+	else if (SERVER.length == 0)
+		SERVER = 'localhost';
+	else if(SERVER.length < 12)
+		{
+		alert("Server: "+SERVER+"  is not a valid server name");
+		return;
+		}
+
+	
 	Publish();
 	Subscribe();
 	

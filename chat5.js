@@ -23,7 +23,18 @@ function iWS( server_service ){
 	
 	this.start = function( message ){
 	    if (window["WebSocket"]) {
-			conn = new WebSocket(service);
+			try
+				{
+				conn = new WebSocket(service);
+				}
+			catch(err) 
+				{ 
+				var msg = "Error: Unable to connect to Websocket Server ("+service+")" ;
+				msg += "\nReported Error is:"+err; 
+				alert(msg);
+				return;
+				}
+			
 			this.conn = conn;
 			if (!conn){
 				appendLog(displayDivId,"unable to connect");
