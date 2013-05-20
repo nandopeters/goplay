@@ -8,17 +8,70 @@
 var SERVER = 'dev.itelehome.com';
 
 
+function wsJsonMsg(message) {
+		var m = {"messagetype": null, "key":null, "from":null,"to":null, 
+ 			"payload":{"session_id":null, "url": null, "msg":null, 
+ 				"participants": [{"users":null}]
+ 					}
+ 		};
+	
+	this.setMessage = function (message) { 
+		m.messagetype = message.messagetype;
+		m.key			= message.key;
+		m.from			= message.from;
+		m.to			= message.to;
+		m.payload.session_id = message.payload.session_id;
+		m.payload.url		 = message.payload.url;
+		m.payload.msg		 = message.payload.msg;
+		if (  'undefined' !== typeof message.payload.participants )
+			m.payload.participants = message.payload.participants;
+		};
+	
+	if (typeof message !== 'undefined')
+		this.setMessage(message);
+	
+	this.setMessagetType =function ( mType)	{ m.messagetype = mType;}
+	this.setSessionId 	= function ( sid) 	{ m.payload.session_id = sid ;}
+	this.setKey 		= function ( key) 	{ m.payload.key = key ;}
+	this.setFrom	 	= function ( from) 	{ m.payload.from = from ;}
+	this.setTo 			= function ( to) 	{ m.payload.to = to ;}
+	this.setUrl 		= function ( url) 	{ m.payload.url = url ;}
+	this.setMsg		 	= function ( msg) 	{ m.payload.msg = msg ;}
+	
+	this.addUser		= function (user)	{ 
+		
+			if (  'undefined' === typeof m.payload.participants )
+				m.payload.participants[0] = {"users":null};
+			var l = m.payload.participants.length;
+			m.payload.participants[l-1].users = user;
+			m.payload.participants[l] = {"users":null};
+			}
+
+	this.getMessage 		= function () { return  m;};
+	this.getMessagetType 	= function () { return  m.messagetype  ;}
+	this.getSessionId 		= function () { return  m.payload.session_id   ;}
+	this.getKey 	= function ( ) { return  m.payload.key  ;}
+	this.getFrom 	= function ( ) { return  m.payload.from  ;}
+	this.getTo 		= function ( ) { return  m.payload.to  ;}
+	this.getUrl 	= function ( ) { return  m.payload.url  ;}
+	this.getMsg 	= function ( ) { return  m.payload.msg  ;}	
+
+}
+
     function Publish(){
     	
- 	   	 var ws = new iWS("ws://"+SERVER+":9030/Publish");
+ 	   	var ws = new iWS("ws://"+SERVER+":9030/Publish");
  		console.log(ws);
  		
- 	
  	   	ws.setDisplayFunc(showshow);
 
  	   	ws.start(  );
- 		ws.addOnMessage2( msgHandler );
- 	   	
+ 		ws.addOnMessage( msgHandler );
+ 	   	a = {"messagetype": "join_session", "key":null, "from":null,"to":null, 
+ 	   			"payload":{"session_id":null, "url": null, "msg":null
+ 	   					}
+ 	   		};
+ 	
  	   	$("#sendMsg").click( function()
  	            {
  	   	var pMsg = 	'{';
@@ -55,7 +108,7 @@ var SERVER = 'dev.itelehome.com';
 	   	ws.setDisplayFunc(showshow);
 	    var pMsg = 'MAKUMBA';
 	   	ws.start( pMsg );
- 		ws.addOnMessage2( msgSubscribeHandler );
+ 		ws.addOnMessage( msgSubscribeHandler );
     }
 
     function showshow	(logDiv, msg) {

@@ -2,10 +2,9 @@
 function iWS( server_service ){
 	var conn;
 	var service=server_service;
-	// $("#log")
-	//var	displayDivId = $("<div>");
+
 	var displayDivId = $("#log");
-	
+
 	setDisplayDiv( displayDivId );	
 
 	this.setDisplayFunc = function( func ){
@@ -16,6 +15,7 @@ function iWS( server_service ){
 	};
 
 	this.setDisplayFunc(baseDisplayFunc);
+	
 	
 	_this = this;
 	
@@ -38,7 +38,8 @@ function iWS( server_service ){
 				appendLog(displayDivId,"unable to connect");
 				return;
 			}
-
+			
+			
 			addOnClose();
 			addOnError();
 			//addOnMessage();
@@ -48,21 +49,7 @@ function iWS( server_service ){
 		{
 	    	appendLog(displayDivId,$("<div><b>Your browser does not support WebSockets.</b></div>"));
 		}
-	    /*
-	    $("#form").submit(function() {
-	    	console.log('submit');
-	        if (!conn) {
-	        	console.log('conn is NULL');
-	            return false;
-	        }
-	        console.log("msg typed:",$("#msg").val() );
-			var pMsg = '{"msgtype":"join_session","payload":{"session_id":"51", "msg":"hei there baby"} }';
-			console.log('conn is true.  msg=',pMsg);
-			this.conn.send(pMsg);
 
-	        return false
-	    });
-	    **/
 	};  
 	
 	function nullDisplayFunc () {
@@ -91,7 +78,8 @@ function iWS( server_service ){
 	
 	this.Close = function ( ){
 		conn.close();
-	};//
+		conn.onmessage = function(){};  // null out the onmessage function
+	};
 	
 	
 	function addOnError(  ){
@@ -107,8 +95,7 @@ function iWS( server_service ){
         }
 	};
 	
-	this.addOnMessage2 = function( msgHandler)  {
-	//	conn.onmessage = null;
+	this.addOnMessage = function( msgHandler)  {
 		conn.onmessage = msgHandler;
 	};
 

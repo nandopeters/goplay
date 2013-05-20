@@ -120,7 +120,7 @@ func Publish(ws *websocket.Conn) {
 				}
 
 			fmt.Println("Received Message No:", inMsgNo)
-
+			fmt.Println(reply);
 			inMsgNo++
 			
 			var	m Message
