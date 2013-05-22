@@ -13,17 +13,17 @@ import (
 
 /*
 messagetype:
-location			payload { session_id, datetime, latitude, longitude, msg }
-broadcast			payload { session_id, datetime, msg }
-join_session		payload { session_id, datetime,	msg }
-leave_session		payload { session_id, datetime,	msg }
-session_ended		payload { session_id, datetime, msg }
-session_started		payload { session_id, datetime, msg }
-session_paused		payload { session_id, datetime, msg }
-session_resumed		payload { session_id, datetime, elapsedtime, msg }
-chat_msg			payload { session_id, datetime, msg }
-list_participants	payload { session_id, participants [] }
-query_participants	payload { session_id }
+location			payload { schedule_id, session_id, datetime, latitude, longitude, msg }
+broadcast			payload { schedule_id, session_id, datetime, msg }
+join_session		payload { schedule_id, session_id, datetime,	msg }
+leave_session		payload { schedule_id, session_id, datetime,	msg }
+session_ended		payload { schedule_id, session_id, datetime, msg }
+session_started		payload { schedule_id, session_id, datetime, msg }
+session_paused		payload { schedule_id, session_id, datetime, msg }
+session_resumed		payload { schedule_id, session_id, datetime, elapsedtime, msg }
+chat_msg			payload { schedule_id, session_id, datetime, msg }
+list_participants	payload { schedule_id, session_id, participants [] }
+query_participants	payload { schedule_id, session_id }
 url					payload {session_id, url }
 */
 
@@ -33,6 +33,7 @@ type parts	struct {
 	}
 
 type load	struct {
+		Schedule_id		string
 		Session_id		string
 		Latitude		string
 		Longitude		string
@@ -110,18 +111,22 @@ func Publish(ws *websocket.Conn) {
 	
 	//Receive Message	
 	var reply string
-	
+	var	selfNo int
+	selfNo = 1
 	fmt.Println("ENTERING Publish()");
 		for {
 			err := websocket.Message.Receive(ws, &reply)
 			if (err != nil ) {
-				fmt.Println("Error = ", err.Error() );
+				fmt.Println("Exiting Publis.  Error = ", err.Error() );
 				return;
 				}
 
-			fmt.Println("Received Message No:", inMsgNo)
-			fmt.Println(reply);
+		//	fmt.Println("Received Message No:", inMsgNo)
+		//	fmt.Println(reply);
 			inMsgNo++
+			
+			fmt.Println("self No:", selfNo)
+			selfNo++
 			
 			var	m Message
 			err1 := json.Unmarshal([]byte(reply), &m)
@@ -133,7 +138,7 @@ func Publish(ws *websocket.Conn) {
 		
 			msgQ.insertMsgAllQ( reply )
 		}
-	fmt.Println("\n Exiting Publiss() \n\n");
+	fmt.Println("\n Exiting Publish() \n\n");
 }
 
 
@@ -155,9 +160,13 @@ func Subscribe(ws *websocket.Conn) {
 	for s := range msgQ.chanQ[who] {
         fmt.Println("Sending to '",who, "': ", s)
         err := websocket.Message.Send(ws, s)
-        checkError(err)
+        if (err != nil ) {
+			fmt.Println("Existing Subscribe.  Error = ", err.Error() );
+			return;
+			}
+        //checkError(err)
         }
-     fmt.Println("DONE");
+     fmt.Println("DONE.  Existing Subscribe");
 }
 
 
