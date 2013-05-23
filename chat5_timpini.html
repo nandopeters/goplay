@@ -75,10 +75,11 @@ function wsJsonMsg(message) {
  	   	$("#sendMsg").click( function()
  	            {
  	   	var pMsg = 	'{';
- 	   		pMsg +=		'"messagetype":"join_session"';
+ 	  // 		pMsg +=		'"messagetype":"join_session"';
+ 	   	 		pMsg +=		'"messagetype":"broadcast"';
  	   		pMsg +=		',"key":"axDRttOVw123444"';
- 	   		pMsg +=		',"from":"MAKUMBA"';
- 	   		pMsg +=		',"to": "KATANGA"';
+ 	   		pMsg +=		',"from":"Rocco"';
+ 	   		pMsg +=		',"to": "All"';
  	  		pMsg += 	',"payload":{';
  	  		pMsg +=		' "session_id":"51" ';
  	  		pMsg +=		',"url":"http://www.itelepsych.com"';		
@@ -106,7 +107,7 @@ function wsJsonMsg(message) {
 	
 	
 	   	ws.setDisplayFunc(showshow);
-	    var pMsg = 'MAKUMBA';
+	    var pMsg = 'TIMPINI';
 	   	ws.start( pMsg );
  		ws.addOnMessage( msgSubscribeHandler );
     }
