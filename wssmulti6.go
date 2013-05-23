@@ -173,8 +173,6 @@ func Subscribe(ws *websocket.Conn) {
 	// add the connection to the messageQ
 	msgQ.addQ( who )
 	
-	fmt.Println( "iPad :", msgQ )
-
 	for s := range msgQ.chanQ[who] {
         fmt.Println("Sending to '",who, "': ", s)
         err := websocket.Message.Send(ws, s)
