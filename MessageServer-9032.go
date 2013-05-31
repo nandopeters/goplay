@@ -157,6 +157,78 @@ func Publish(ws *websocket.Conn) {
 		}
 }
 
+func PubSubSub(ws *websocket.Conn,  who string) {
+
+	fmt.Println("Inside PubSubSub()");
+	
+	for s := range msgQ.chanQ[who] {
+        fmt.Println("Sending to '",who, "': ", s)
+        err := websocket.Message.Send(ws, s)
+        if (err != nil ) {
+			fmt.Println("Publish() Error = ", err.Error() );
+			break;
+			}
+        }
+     fmt.Println("Subsribe() Done for: ", who);
+}
+
+
+
+func PubSubPub( ws *websocket.Conn) {
+	//Receive Message	
+	fmt.Println("Inside PubSubPub()");
+	var reply string
+	
+		for {
+			err := websocket.Message.Receive(ws, &reply)
+			if (err != nil ) {
+				fmt.Println("PubSubPub() Error = ", err.Error() );
+				return;
+				}
+
+			fmt.Println("Received Message No:", inMsgNo)
+			fmt.Println(reply);
+			inMsgNo++
+			
+			var	m Message
+			err1 := json.Unmarshal([]byte(reply), &m)
+			checkError2(err1)
+			fmt.Println("Unmarshalled:", m.To);
+			
+		//	err = websocket.Message.Send(ws, "ACK")
+		//	checkError2(err)
+		if ( strings.Contains(m.Messagetype,"broadcast") ){ 
+			msgQ.insertMsgAllQ( reply )
+			} else {
+				msgQ.pushQ(m.To, reply)
+			}
+		}
+}
+
+func PubSub( ws *websocket.Conn) {
+	//Receive Message	
+	// iPad identifies itself by sending it's id (who)
+	var who string;
+	fmt.Println("starting PubSub()");
+	err := websocket.Message.Receive(ws, &who)
+	
+	if (err != nil ) {
+		fmt.Println("Publish() Error receiing WHO on connection ", err.Error() );
+		return;
+		}
+	
+	fmt.Println("Connected to client :", who)
+	
+	// add the connection to the messageQ
+	msgQ.addQ( who );
+	go PubSubPub( ws );
+	go PubSubSub( ws, who );
+	// make channel to wait foreve
+	c := make(chan int) 
+	<- c
+	fmt.Println("ENDING PubSub()");
+}
+
 
 func Subscribe(ws *websocket.Conn) {
 	
@@ -265,12 +337,13 @@ func main() {
 	
 	go msgQ.doDBQ()
 
+	http.Handle("/PubSub", websocket.Handler(PubSub))
 	http.Handle("/Subscribe", websocket.Handler(Subscribe))
 	http.Handle("/itelPublishOnce", websocket.Handler(itelPublishOnce))
 	http.Handle("/Publish", websocket.Handler(Publish))
 	http.HandleFunc("/exit", exit_handler)
 	http.Handle("/", websocket.Handler(rootH))
-	err := http.ListenAndServe(":9030", nil)
+	err := http.ListenAndServe(":9032", nil)
 	checkError(err)
 	}
 
