@@ -1,0 +1,134 @@
+Connected to client : doctor1
+Publish() Error =  EOF
+Connected to client : doctor1
+Publish() Error =  EOF
+Received Message No: 1
+{"messagetype":"join_session","key":null,"from":"patient5","to":"doctor1","payload":{"schedule_id":"108","session_id":null,"url":null,"full_name":" Patient A Five ","msg":null}}
+Unmarshalled: doctor1
+Sending to ' doctor1 ':  {"messagetype":"join_session","key":null,"from":"patient5","to":"doctor1","payload":{"schedule_id":"108","session_id":null,"url":null,"full_name":" Patient A Five ","msg":null}}
+Publish() Error =  EOF
+Connected to client : patient5
+Received Message No: 2
+{"messagetype":"leave_session","key":null,"from":"patient5","to":"doctor1","payload":{"schedule_id":"108","session_id":null,"url":null,"full_name":" Patient A Five ","msg":null}}
+Unmarshalled: doctor1
+Sending to ' doctor1 ':  {"messagetype":"leave_session","key":null,"from":"patient5","to":"doctor1","payload":{"schedule_id":"108","session_id":null,"url":null,"full_name":" Patient A Five ","msg":null}}
+Publish() Error =  EOF
+Publish() Error =  EOF
+Connected to client : doctor1
+Connected to client : doctor1
+Received Message No: 3
+{"messagetype":"join_session","key":null,"from":"patient5","to":"doctor1","payload":{"schedule_id":"108","session_id":null,"url":null,"full_name":" Patient A Five ","msg":null}}
+Unmarshalled: doctor1
+Sending to ' doctor1 ':  {"messagetype":"join_session","key":null,"from":"patient5","to":"doctor1","payload":{"schedule_id":"108","session_id":null,"url":null,"full_name":" Patient A Five ","msg":null}}
+Publish() Error =  EOF
+Connected to client : patient5
+Received Message No: 4
+{"messagetype":"leave_session","key":null,"from":"patient5","to":"doctor1","payload":{"schedule_id":"108","session_id":null,"url":null,"full_name":" Patient A Five ","msg":null}}
+Unmarshalled: doctor1
+Sending to ' doctor1 ':  {"messagetype":"leave_session","key":null,"from":"patient5","to":"doctor1","payload":{"schedule_id":"108","session_id":null,"url":null,"full_name":" Patient A Five ","msg":null}}
+Publish() Error =  EOF
+Publish() Error =  EOF
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Publish() Error =  EOF
+Connected to client : psoiya
+Received Message No: 5
+{"messagetype":"join_session","key":null,"from":"jlselles","to":"greenmd","payload":{"schedule_id":"117","session_id":null,"url":null,"full_name":" Lori Selles ","msg":null}}
+Unmarshalled: greenmd
+Sending to ' greenmd ':  {"messagetype":"join_session","key":null,"from":"jlselles","to":"greenmd","payload":{"schedule_id":"117","session_id":null,"url":null,"full_name":" Lori Selles ","msg":null}}
+Publish() Error =  EOF
+Connected to client : jlselles
+Connected to client : psoiya
+Connected to client : psoiya
+Connected to client : psoiya
+Publish() Error =  EOF
+Connected to client : psoiya
+Publish() Error =  EOF
+Connected to client : psoiya
+Connected to client : greenmd
+Connected to client : greenmd
+Received Message No: 6
+{"messagetype":"url","key":null,"from":"greenmd","to":"jlselles","payload":{"schedule_id":null,"url":"http://drugs.com","full_name":null,"msg":null}}
+Unmarshalled: jlselles
+Sending to ' jlselles ':  {"messagetype":"url","key":null,"from":"greenmd","to":"jlselles","payload":{"schedule_id":null,"url":"http://drugs.com","full_name":null,"msg":null}}
+Received Message No: 7
+{"messagetype":"url","key":null,"from":"greenmd","to":"jlselles","payload":{"schedule_id":null,"url":"bing.com","full_name":null,"msg":null}}
+Unmarshalled: jlselles
+Sending to ' jlselles ':  {"messagetype":"url","key":null,"from":"greenmd","to":"jlselles","payload":{"schedule_id":null,"url":"bing.com","full_name":null,"msg":null}}
+Connected to client : greenmd
+Received Message No: 8
+{"messagetype":"url","key":null,"from":"greenmd","to":"jlselles","payload":{"schedule_id":null,"url":"www.bing.com","full_name":null,"msg":null}}
+Unmarshalled: jlselles
+Sending to ' jlselles ':  {"messagetype":"url","key":null,"from":"greenmd","to":"jlselles","payload":{"schedule_id":null,"url":"www.bing.com","full_name":null,"msg":null}}
+Received Message No: 9
+{"messagetype":"url","key":null,"from":"greenmd","to":"jlselles","payload":{"schedule_id":null,"url":"http://www.mayoclinic.com/health/prolactinoma/DS00532/DSECTION=symptoms","full_name":null,"msg":null}}
+Unmarshalled: jlselles
+Sending to ' jlselles ':  {"messagetype":"url","key":null,"from":"greenmd","to":"jlselles","payload":{"schedule_id":null,"url":"http://www.mayoclinic.com/health/prolactinoma/DS00532/DSECTION=symptoms","full_name":null,"msg":null}}
+Publish() Error =  EOF
+Received Message No: 10
+{"messagetype":"leave_session","key":null,"from":"jlselles","to":"greenmd","payload":{"schedule_id":"117","session_id":null,"url":null,"full_name":" Lori Selles ","msg":null}}
+Unmarshalled: greenmd
+Sending to ' greenmd ':  {"messagetype":"leave_session","key":null,"from":"jlselles","to":"greenmd","payload":{"schedule_id":"117","session_id":null,"url":null,"full_name":" Lori Selles ","msg":null}}
+Received Message No: 11
+{"messagetype":"leave_session","key":null,"from":"jlselles","to":"greenmd","payload":{"schedule_id":"117","session_id":null,"url":null,"full_name":" Lori Selles ","msg":null}}
+Unmarshalled: greenmd
+Sending to ' greenmd ':  {"messagetype":"leave_session","key":null,"from":"jlselles","to":"greenmd","payload":{"schedule_id":"117","session_id":null,"url":null,"full_name":" Lori Selles ","msg":null}}
+Publish() Error =  write tcp 184.183.0.199:45397: broken pipe
+Subsribe() Done for:  greenmd
+Publish() Error =  EOF
+Connected to client : greenmd
+Connected to client : null
+Connected to client : null
+Connected to client : null
+Publish() Error =  EOF
+Connected to client : greenmd
+Connected to client : greenmd
+Publish() Error =  EOF
+root msg received: 12
+ALFONSO
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Publish() Error =  EOF
+Publish() Error =  EOF
+Received Message No: 12
+{"messagetype":"join_session","key":null,"from":"luis","to":"greenmd","payload":{"schedule_id":"57","session_id":null,"url":null,"full_name":" Luis Montanez ","msg":null}}
+Unmarshalled: greenmd
+Sending to ' greenmd ':  {"messagetype":"join_session","key":null,"from":"luis","to":"greenmd","payload":{"schedule_id":"57","session_id":null,"url":null,"full_name":" Luis Montanez ","msg":null}}
+Publish() Error =  EOF
+Received Message No: 13
+{"messagetype":"join_session","key":null,"from":"luis","to":"greenmd","payload":{"schedule_id":"110","session_id":null,"url":null,"full_name":" Luis Montanez ","msg":null}}
+Unmarshalled: greenmd
+Sending to ' greenmd ':  {"messagetype":"join_session","key":null,"from":"luis","to":"greenmd","payload":{"schedule_id":"110","session_id":null,"url":null,"full_name":" Luis Montanez ","msg":null}}
+Publish() Error =  write tcp 184.183.0.199:40353: broken pipe
+Subsribe() Done for:  greenmd
+Publish() Error =  EOF
+Received Message No: 14
+{"messagetype":"join_session","key":null,"from":"luis","to":"greenmd","payload":{"schedule_id":"116","session_id":null,"url":null,"full_name":" Luis Montanez ","msg":null}}
+Unmarshalled: greenmd
+Received Message No: 15
+{"messagetype":"join_session","key":null,"from":"luis","to":"greenmd","payload":{"schedule_id":"57","session_id":null,"url":null,"full_name":" Luis Montanez ","msg":null}}
+Unmarshalled: greenmd
+Received Message No: 16
+{"messagetype":"join_session","key":null,"from":"luis","to":"greenmd","payload":{"schedule_id":"57","session_id":null,"url":null,"full_name":" Luis Montanez ","msg":null}}
+Unmarshalled: greenmd
+Publish() Error =  EOF
+Received Message No: 17
+{"messagetype":"join_session","key":null,"from":"luis","to":"greenmd","payload":{"schedule_id":"57","session_id":null,"url":null,"full_name":" Luis Montanez ","msg":null}}
+Unmarshalled: greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : greenmd
+Connected to client : psoiya
