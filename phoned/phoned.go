@@ -6,6 +6,7 @@ import (
 	"os"
 	"code.google.com/p/go.net/websocket"
 	"time"
+	"utils/configfile"
 )
 
 type Location struct {
@@ -27,8 +28,16 @@ func str2js(c Location) string {
 }
 
 func main() {
-	
-	service := "ws://localhost:9030"
+	var	cfgFile = "msgsrvr.cfg"
+	HOST, PORT, errFile := configfile.GetHostPort(cfgFile)
+	if( errFile != nil ){
+		fmt.Println(errFile.Error() )
+		fmt.Println("Unable to read configuration from file :"+cfgFile )
+		return
+		}
+
+	service := "ws://"+HOST+":"+PORT
+
 
 	if len(os.Args) > 1 {
 		service += "/" + os.Args[1]
@@ -37,7 +46,7 @@ func main() {
 		}
 
 	//Connect
-	conn, err := websocket.Dial(service, "", "http://localhost")
+	conn, err := websocket.Dial(service, "", "http://"+HOST)
 	checkError(err)
 
 
@@ -80,3 +89,5 @@ func locationUpdate() string {
 	
 	return jstr
 }
+
+

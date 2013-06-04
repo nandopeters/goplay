@@ -1,30 +1,34 @@
 package main
 
 import (
+
 	"fmt"
+	"strings"
 	"net/http"
 	"log"
 	"os"
 	"encoding/json"
 	"code.google.com/p/go.net/websocket"
 	"strconv"
+	"utils/configfile"
 )
 
 
 /*
 messagetype:
-location			payload { schedule_id, session_id, datetime, latitude, longitude, msg }
-broadcast			payload { schedule_id, session_id, datetime, msg }
-join_session		payload { schedule_id, session_id, datetime,	msg }
-leave_session		payload { schedule_id, session_id, datetime,	msg }
-session_ended		payload { schedule_id, session_id, datetime, msg }
-session_started		payload { schedule_id, session_id, datetime, msg }
-session_paused		payload { schedule_id, session_id, datetime, msg }
-session_resumed		payload { schedule_id, session_id, datetime, elapsedtime, msg }
-chat_msg			payload { schedule_id, session_id, datetime, msg }
-list_participants	payload { schedule_id, session_id, participants [] }
-query_participants	payload { schedule_id, session_id }
-url					payload {session_id, url }
+location			payload { session_id, datetime, latitude, longitude, msg }
+broadcast			payload { session_id, datetime, msg }
+join_session		payload { session_id, datetime,	msg }
+leave_session		payload { session_id, datetime,	msg }
+url					payload {session_id,  url }
+app_function		payload { session_id, datetime, msg }
+session_ended		payload { session_id, datetime, msg }
+session_started		payload { session_id, datetime, msg }
+session_paused		payload { session_id, datetime, msg }
+session_resumed		payload { session_id, datetime, elapsedtime, msg }
+chat_msg			payload { session_id, datetime, msg }
+list_participants	payload { session_id, participants [] }
+query_participants	payload { session_id }
 */
 
 
@@ -33,8 +37,9 @@ type parts	struct {
 	}
 
 type load	struct {
-		Schedule_id		string
 		Session_id		string
+		Schedule_id		string
+		Full_name		string
 		Latitude		string
 		Longitude		string
 		Datetime		string
@@ -72,13 +77,21 @@ func rootH(ws *websocket.Conn) {
 	//Receive Message	
 	var reply string
 	err := websocket.Message.Receive(ws, &reply)
-	checkError(err)
+	if (err != nil ) {
+		fmt.Println("rootH() Receive Error = ", err.Error() );
+		return;
+		}
+
 	fmt.Println("root msg received:", inMsgNo)
 	fmt.Println( reply )
 	
 	//Send Message
 	err = websocket.Message.Send(ws, reply)
-	checkError(err)
+	if (err != nil ) {
+		fmt.Println("rootH() Send Error = ", err.Error() );
+		return;
+		}
+
 }
 
 
@@ -90,55 +103,132 @@ func itelPublishOnce(ws *websocket.Conn) {
 	var reply string
 	
 		err := websocket.Message.Receive(ws, &reply)
+		if (err != nil ) {
+			fmt.Println("itelPublishOnce() Receive Error = ", err.Error() );
+			return;
+			}
 
-		checkError(err)
+
 		fmt.Println("Received Message No:", inMsgNo)
 		fmt.Println( reply )
 		inMsgNo++
 		
 		var	m Message
 		err1 := json.Unmarshal([]byte(reply), &m)
-		checkError(err1)
+		checkError2(err1)
 
 		err = websocket.Message.Send(ws, "ACK")
-		checkError(err)
+		if (err != nil ) {
+			fmt.Println("itelPublishOnce() Send ACK Error = ", err.Error() );
+			return;
+			}
 	
 		msgQ.insertMsgAllQ( reply )
 	
 }
 
+
 func Publish(ws *websocket.Conn) {
 	
 	//Receive Message	
 	var reply string
-	var	selfNo int
-	selfNo = 1
-	fmt.Println("ENTERING Publish()");
+	
 		for {
 			err := websocket.Message.Receive(ws, &reply)
 			if (err != nil ) {
-				fmt.Println("Exiting Publis.  Error = ", err.Error() );
+				fmt.Println("Publish() Error = ", err.Error() );
 				return;
 				}
 
-		//	fmt.Println("Received Message No:", inMsgNo)
-		//	fmt.Println(reply);
+			fmt.Println("Received Message No:", inMsgNo)
+			fmt.Println(reply);
 			inMsgNo++
-			
-			fmt.Println("self No:", selfNo)
-			selfNo++
 			
 			var	m Message
 			err1 := json.Unmarshal([]byte(reply), &m)
 			checkError2(err1)
-			fmt.Println("Unmarshalled:", m);
+			fmt.Println("Unmarshalled:", m.To);
 			
 		//	err = websocket.Message.Send(ws, "ACK")
-		//	checkError(err)
-		
+		//	checkError2(err)
+		if ( strings.Contains(m.Messagetype,"broadcast") ){ 
 			msgQ.insertMsgAllQ( reply )
+			} else {
+				msgQ.pushQ(m.To, reply)
+			}
 		}
-	fmt.Println("\n Exiting Publish() \n\n");
+}
+
+func PubSubSub(ws *websocket.Conn,  who string) {
+
+	fmt.Println("Inside PubSubSub()");
+	
+	for s := range msgQ.chanQ[who] {
+        fmt.Println("Sending to '",who, "': ", s)
+        err := websocket.Message.Send(ws, s)
+        if (err != nil ) {
+			fmt.Println("Publish() Error = ", err.Error() );
+			break;
+			}
+        }
+     fmt.Println("Subsribe() Done for: ", who);
+}
+
+
+
+func PubSubPub( ws *websocket.Conn) {
+	//Receive Message	
+	fmt.Println("Inside PubSubPub()");
+	var reply string
+	
+		for {
+			err := websocket.Message.Receive(ws, &reply)
+			if (err != nil ) {
+				fmt.Println("PubSubPub() Error = ", err.Error() );
+				return;
+				}
+
+			fmt.Println("Received Message No:", inMsgNo)
+			fmt.Println(reply);
+			inMsgNo++
+			
+			var	m Message
+			err1 := json.Unmarshal([]byte(reply), &m)
+			checkError2(err1)
+			fmt.Println("Unmarshalled:", m.To);
+			
+		//	err = websocket.Message.Send(ws, "ACK")
+		//	checkError2(err)
+		if ( strings.Contains(m.Messagetype,"broadcast") ){ 
+			msgQ.insertMsgAllQ( reply )
+			} else {
+				msgQ.pushQ(m.To, reply)
+			}
+		}
+}
+
+func PubSub( ws *websocket.Conn) {
+	//Receive Message	
+	// iPad identifies itself by sending it's id (who)
+	var who string;
+	fmt.Println("starting PubSub()");
+	err := websocket.Message.Receive(ws, &who)
+	
+	if (err != nil ) {
+		fmt.Println("Publish() Error receiing WHO on connection ", err.Error() );
+		return;
+		}
+	
+	fmt.Println("Connected to client :", who)
+	
+	// add the connection to the messageQ
+	msgQ.addQ( who );
+	go PubSubPub( ws );
+	go PubSubSub( ws, who );
+	// make channel to wait foreve
+	c := make(chan int) 
+	<- c
+	fmt.Println("ENDING PubSub()");
 }
 
 
@@ -149,24 +239,26 @@ func Subscribe(ws *websocket.Conn) {
 	var who string;
 
 	err := websocket.Message.Receive(ws, &who)
-	checkError(err)
+	
+	if (err != nil ) {
+		fmt.Println("Publish() Error receiing WHO on connection ", err.Error() );
+		return;
+		}
+	
 	fmt.Println("Connected to client :", who)
 	
 	// add the connection to the messageQ
 	msgQ.addQ( who )
 	
-	fmt.Println( "iPad :", msgQ )
-
 	for s := range msgQ.chanQ[who] {
         fmt.Println("Sending to '",who, "': ", s)
         err := websocket.Message.Send(ws, s)
         if (err != nil ) {
-			fmt.Println("Existing Subscribe.  Error = ", err.Error() );
-			return;
+			fmt.Println("Publish() Error = ", err.Error() );
+			break;
 			}
-        //checkError(err)
         }
-     fmt.Println("DONE.  Existing Subscribe");
+     fmt.Println("Subsribe() Done for: ", who);
 }
 
 
@@ -198,6 +290,12 @@ func  (cq *AppChannelQ) popAllQ ( who string )  {
 			fmt.Println("pop:",s)
 		}
 	}
+	
+func  (cq *AppChannelQ ) pushQ( who string, msg string) {
+
+		cq.chanQ[who] <- msg
+
+	}	
 	
 func  (cq *AppChannelQ ) insertMsgAllQ( msg string) {
 	for k, _ := range cq.chanQ {
@@ -237,16 +335,27 @@ func myFileAppendLine ( fName string, line string )  {
 
 func main() {
 
+	var	cfgFile = "msgsrvr.cfg"
+	_, PORT, errFile := configfile.GetHostPort(cfgFile)
+	if( errFile != nil ){
+		fmt.Println(errFile.Error() )
+		fmt.Println("Unable to read configuration from file :"+cfgFile )
+		return
+		}
+
+
+
 	msgQ.initQ()
 	
 	go msgQ.doDBQ()
 
+	http.Handle("/PubSub", websocket.Handler(PubSub))
 	http.Handle("/Subscribe", websocket.Handler(Subscribe))
 	http.Handle("/itelPublishOnce", websocket.Handler(itelPublishOnce))
 	http.Handle("/Publish", websocket.Handler(Publish))
 	http.HandleFunc("/exit", exit_handler)
 	http.Handle("/", websocket.Handler(rootH))
-	err := http.ListenAndServe(":9030", nil)
+	err := http.ListenAndServe(":"+PORT, nil)
 	checkError(err)
 	}
 

@@ -3,8 +3,12 @@ package main
 import (
 	"fmt"
 	"encoding/json"
+	"strings"
+	"bufio"
 	"os"
 	"code.google.com/p/go.net/websocket"
+	"time"
+	"utils/configfile"
 )
 
 type Location struct {
@@ -27,16 +31,29 @@ func str2js(c Location) string {
 
 func main() {
 	
-	service := "ws://localhost:9030/send"
-	//service := "ws://10.0.1.6:9030/"
-	//service := "ws://dev.itelehome.com:9030/"
+	var	cfgFile = "msgsrvr.cfg"
+	HOST, PORT, errFile := configfile.GetHostPort(cfgFile)
+	if( errFile != nil ){
+		fmt.Println(errFile.Error() )
+		fmt.Println("Unable to read configuration from file :"+cfgFile )
+		return
+		}
+
+	service := "ws://"+HOST+":"+PORT
+
+	if len(os.Args) > 1 {
+		service += "/" + os.Args[1]
+	} else {
+		service += "/"
+		}
 
 	//Connect
-	conn, err := websocket.Dial(service, "", "http://localhost")
+	conn, err := websocket.Dial(service, "", "http://"+HOST)
 	checkError(err)
 
+
 	//Send
-	smsg := locationUpdate()
+	smsg := locationUpdate( )
 	err = websocket.Message.Send(conn, smsg)
 	checkError(err)
 
@@ -44,7 +61,7 @@ func main() {
 	var rmsg string	
 	err = websocket.Message.Receive(conn, &rmsg)
 	checkError(err)
-	fmt.Println("Received from server: " + rmsg)
+	fmt.Println("Received: " + rmsg)
 	
 	os.Exit(0)
 }
@@ -64,7 +81,7 @@ func locationUpdate() string {
 	loc.Ag = "locmgr"
 	loc.Sb = "locupdt"
 	loc.Fr = "4"
-	loc.DT = "2012-05-02:12:0000"
+	loc.DT = time.Now().String()
 	loc.Lat = "60.00"
 	loc.Lng = "-120.00"
 	loc.Msg = "Arrived"
@@ -74,3 +91,4 @@ func locationUpdate() string {
 	
 	return jstr
 }
+

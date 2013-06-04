@@ -3,10 +3,9 @@ package main
 import (
 	"fmt"
 	"encoding/json"
-	"strings"
-	"bufio"
 	"os"
 	"code.google.com/p/go.net/websocket"
+	"utils/configfile"
 )
 
 type Location struct {
@@ -26,15 +25,15 @@ func str2js(c Location) string {
 
 func main() {
 	var	cfgFile = "msgsrvr.cfg"
-	HOST, PORT, errFile := getConfig(cfgFile)
+	HOST, PORT, errFile := configfile.GetHostPort(cfgFile)
 	if( errFile != nil ){
 		fmt.Println(errFile.Error() )
 		fmt.Println("Unable to read configuration from file :"+cfgFile )
 		return
 		}
 
-	service := "ws://"+HOST+":"+PORT+"/Subscribe"
-
+	service := "ws://"+HOST+":"+PORT+"/iPad"
+	
 	var who string
 	
 	if len(os.Args) > 1 {
@@ -42,7 +41,7 @@ func main() {
 	} else {
 		who = "ALFONSO"
 		}
-
+	
 
 
 	//Connect
@@ -72,29 +71,5 @@ func checkError(err error) {
 	}
 }
 
-func getConfig ( cfgFile string) (host string, port string, errOut error )  {
-	file, err := os.Open(cfgFile) // For read access.
-	if err != nil {
-		return "","", err
-	}
-	
-	r := bufio.NewReader(file)
-	line, _, err := r.ReadLine()
-	aa:= strings.Split(string(line[:]), "=")
-	for i := 1; err == nil ; i++ {
-		aa = strings.Split(string(line[:]), "=")
-		switch {
-		case aa[0] == "PORT":
-			port=aa[1]
-		case aa[0] == "HOST" :
-			host = aa[1]		
-		}
-
-		line, _, err = r.ReadLine()
-		}
-	file.Close();
-
-	return host, port, nil
-}
 
 

@@ -1,14 +1,13 @@
-package getConfig
+package configfile
 
 import (
 	"strings"
 	"bufio"
 	"os"
-	"log"
 )
 
 
-func getConfig ( cfgFile string) (host string, port string, errOut error )  {
+func GetHostPort ( cfgFile string) (host string, port string, errOut error )  {
 	file, err := os.Open(cfgFile) // For read access.
 	if err != nil {
 		return "","", err
