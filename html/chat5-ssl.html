@@ -1,0 +1,209 @@
+<html>
+<head>
+<title>Chat Example2222222222</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="chat5.js"></script>
+
+<script type="text/javascript">
+var SERVER = 'app.itelepsych.com';
+
+
+function wsJsonMsg(message) {
+		var m = {"messagetype": null, "key":null, "from":null,"to":null, 
+ 			"payload":{"session_id":null, "url": null, "msg":null, 
+ 				"participants": [{"users":null}]
+ 					}
+ 		};
+	
+	this.setMessage = function (message) { 
+		m.messagetype = message.messagetype;
+		m.key			= message.key;
+		m.from			= message.from;
+		m.to			= message.to;
+		m.payload.session_id = message.payload.session_id;
+		m.payload.url		 = message.payload.url;
+		m.payload.msg		 = message.payload.msg;
+		if (  'undefined' !== typeof message.payload.participants )
+			m.payload.participants = message.payload.participants;
+		};
+	
+	if (typeof message !== 'undefined')
+		this.setMessage(message);
+	
+	this.setMessagetType =function ( mType)	{ m.messagetype = mType;}
+	this.setSessionId 	= function ( sid) 	{ m.payload.session_id = sid ;}
+	this.setKey 		= function ( key) 	{ m.payload.key = key ;}
+	this.setFrom	 	= function ( from) 	{ m.payload.from = from ;}
+	this.setTo 			= function ( to) 	{ m.payload.to = to ;}
+	this.setUrl 		= function ( url) 	{ m.payload.url = url ;}
+	this.setMsg		 	= function ( msg) 	{ m.payload.msg = msg ;}
+	
+	this.addUser		= function (user)	{ 
+		
+			if (  'undefined' === typeof m.payload.participants )
+				m.payload.participants[0] = {"users":null};
+			var l = m.payload.participants.length;
+			m.payload.participants[l-1].users = user;
+			m.payload.participants[l] = {"users":null};
+			}
+
+	this.getMessage 		= function () { return  m;};
+	this.getMessagetType 	= function () { return  m.messagetype  ;}
+	this.getSessionId 		= function () { return  m.payload.session_id   ;}
+	this.getKey 	= function ( ) { return  m.payload.key  ;}
+	this.getFrom 	= function ( ) { return  m.payload.from  ;}
+	this.getTo 		= function ( ) { return  m.payload.to  ;}
+	this.getUrl 	= function ( ) { return  m.payload.url  ;}
+	this.getMsg 	= function ( ) { return  m.payload.msg  ;}	
+
+}
+
+    function Publish(){
+    	
+ 	   	var ws = new iWS("ws://"+SERVER+":9030/Publish");
+		console.log("SERVER :", SERVER);
+ 		console.log(ws);
+ 		
+ 	   	ws.setDisplayFunc(showshow);
+
+ 	   	ws.start(  );
+ 		ws.addOnMessage( msgHandler );
+ 	   	a = {"messagetype": "join_session", "key":null, "from":null,"to":null, 
+ 	   			"payload":{"session_id":null, "url": null, "msg":null
+ 	   					}
+ 	   		};
+ 	
+ 	   	$("#sendMsg").click( function()
+ 	            {
+ 	   	var pMsg = 	'{';
+ 	   		pMsg +=		'"messagetype":"join_session"';
+ 	   		pMsg +=		',"key":"axDRttOVw123444"';
+ 	   		pMsg +=		',"from":"MAKUMBA"';
+ 	   		pMsg +=		',"to": "KATANGA"';
+ 	  		pMsg += 	',"payload":{';
+ 	  		pMsg +=		' "session_id":"51" ';
+ 	  		pMsg +=		',"url":"http://www.itelepsych.com"';		
+ 	  		pMsg +=		',"msg":"hei there baby"';
+ 	  		pMsg +=		',"participants":[{"users": "U1"} ';
+ 	  		pMsg +=						',{"users": "U2"} ';
+ 	  		pMsg +=						',{"users": "U3"} ';
+ 	  		pMsg +=						']';
+ 	  		pMsg +=					'}';
+ 	   		pMsg +=		'}';
+ 				ws.Send(pMsg);
+ 	      		});
+ 	   	
+ 	   	$("#close").click( function()
+ 	            {
+ 	  			console.log("just clicked close");
+ 				ws.Close();
+ 	      		});
+
+     }
+    
+    function Subscribe(){
+
+	   	var ws = new iWS("ws://"+SERVER+":9030/Subscribe");
+	
+	
+	   	ws.setDisplayFunc(showshow);
+	    var pMsg = 'MAKUMBA';
+	   	ws.start( pMsg );
+ 		ws.addOnMessage( msgSubscribeHandler );
+    }
+
+    function showshow	(logDiv, msg) {
+  	    var d = logDiv[0]
+  	    var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
+  	    logDiv.append(msg+"<br>");
+  	    if (doScroll) {
+  	        d.scrollTop = d.scrollHeight - d.clientHeight;
+  	    	}
+  		};    	
+   	
+
+$(document).ready(function () {
+	
+	
+	if (typeof SERVER === 'undefined')
+		SERVER='localhost';
+	else if (SERVER.length == 0)
+		SERVER = 'localhost';
+	else if(SERVER.length < 12)
+		{
+		alert("Server: "+SERVER+"  is not a valid server name");
+		return;
+		}
+
+	
+	Publish();
+//	Subscribe();
+	
+	
+});
+
+function msgHandler(evt){
+	console.log("inside msgHandler. evt", evt.data);
+	showshow($("#log"), evt.data);
+}
+
+function msgSubscribeHandler(evt){
+	console.log("inside msgSubscribeHandler. evt", evt.data);
+	showshow($("#log"), evt.data);
+}
+
+function sendIt() {
+
+	
+}
+
+</script>
+<style type="text/css">
+html {
+    overflow: hidden;
+}
+
+body {
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: gray;
+}
+
+#log {
+    background: white;
+    margin: 0;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    position: absolute;
+    top: 5.5em;
+    left: 0.5em;
+    right: 0.5em;
+    bottom: 3em;
+    overflow: auto;
+}
+
+#form {
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+    position: absolute;
+    bottom: 1em;
+    left: 0px;
+    width: 100%;
+    overflow: hidden;
+}
+
+</style>
+</head>
+<body>
+<div id = "errMsg">THIS IS THE NINO VERSION<br></div>
+<div id="log"></div>
+<form id="form">
+    <input id='sendMsg' type="button" value="Send" />
+    <input type="text" id="msg" size="64"/>
+    <button id='close' >Close</button>
+</form>
+</body>
+</html>
+
